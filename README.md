@@ -68,6 +68,24 @@ powershell -ExecutionPolicy Bypass -File scripts\package.ps1
 >   -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish\single
 > ```
 
+### 發布 GitHub Release
+
+確認版本 OK 後，用 `release.ps1` 一鍵打包並發布到 GitHub（建 tag → 建 Release → 上傳 ZIP 與 exe）：
+
+```powershell
+# 先安全試跑，只顯示將執行的動作
+powershell -ExecutionPolicy Bypass -File scripts\release.ps1 -DryRun
+
+# 正式發布（版本取自 csproj <Version>）
+powershell -ExecutionPolicy Bypass -File scripts\release.ps1
+# 草稿： -Draft ；指定版本： -Version 1.1.0 ；沿用既有打包： -SkipPackage
+```
+
+- 認證沿用本機 Git Credential Manager 既有的 GitHub token，無需自備。
+- Release 說明自動取 `CHANGELOG.md` 對應版本段落。
+- 若該版本 Release 已存在會中止（避免覆蓋）。
+- 發新版流程：改 csproj 的 `<Version>` → 更新 `CHANGELOG.md` → 跑 `release.ps1`。
+
 ### 分享與防毒注意
 
 未做數位簽章的 exe 可能被 SmartScreen 或防毒擋下：
