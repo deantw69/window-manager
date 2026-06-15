@@ -19,5 +19,8 @@ x86/
 *.coverage
 *.coveragexml
 
+# 發佈輸出
+publish/
+
 # 其他
 *.log
