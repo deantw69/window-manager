@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>WindowManager</RootNamespace>
+    <AssemblyName>WindowManager</AssemblyName>
+    <Version>1.0.0</Version>
+    <Product>視窗管理員</Product>
+    <Description>Windows 視窗位置記憶與還原工具</Description>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- WPF 透過 manifest 設定 Per-Monitor v2 DPI；抑制 WinForms 工具鏈的 WFAC010 提示 -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+
+</Project>

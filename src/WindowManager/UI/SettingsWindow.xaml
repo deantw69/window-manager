@@ -1,0 +1,81 @@
+<Window x:Class="WindowManager.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="視窗管理員 — 設定"
+        Width="460" Height="640"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="觸發機制" FontWeight="Bold" Margin="0,0,0,6" />
+                <CheckBox x:Name="HotkeysEnabledBox" Content="啟用全域快捷鍵" Margin="0,2" />
+                <CheckBox x:Name="AutoSaveEnabledBox" Content="自動定時儲存" Margin="0,2" />
+                <CheckBox x:Name="AutoRestoreNewBox" Content="偵測到新視窗時自動還原" Margin="0,2" />
+                <CheckBox x:Name="RestoreOnStartupBox" Content="開機 / 登入後自動還原" Margin="0,2" />
+
+                <Separator Margin="0,10" />
+                <TextBlock Text="快捷鍵" FontWeight="Bold" Margin="0,0,0,6" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="儲存：" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="SaveHotkeyBox" IsReadOnly="True"
+                             Margin="0,2" Padding="4" PreviewKeyDown="HotkeyBox_PreviewKeyDown"
+                             Tag="Save" ToolTip="點此後直接按下想要的組合鍵" />
+                    <Button Grid.Row="0" Grid.Column="2" Content="清除" Margin="6,2,0,2" Padding="8,2"
+                            Tag="Save" Click="ClearHotkey_Click" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="還原：" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="RestoreHotkeyBox" IsReadOnly="True"
+                             Margin="0,2" Padding="4" PreviewKeyDown="HotkeyBox_PreviewKeyDown"
+                             Tag="Restore" ToolTip="點此後直接按下想要的組合鍵" />
+                    <Button Grid.Row="1" Grid.Column="2" Content="清除" Margin="6,2,0,2" Padding="8,2"
+                            Tag="Restore" Click="ClearHotkey_Click" />
+                </Grid>
+
+                <Separator Margin="0,10" />
+                <TextBlock Text="自動儲存間隔（秒）" FontWeight="Bold" Margin="0,0,0,6" />
+                <TextBox x:Name="IntervalBox" Padding="4" />
+
+                <Separator Margin="0,10" />
+                <TextBlock Text="比對門檻（0 ~ 1，越高越嚴格）" FontWeight="Bold" Margin="0,0,0,6" />
+                <TextBox x:Name="ThresholdBox" Padding="4" />
+
+                <TextBlock Text="累加記憶最大保留筆數（0 = 不限制）" FontWeight="Bold" Margin="0,10,0,6" />
+                <TextBox x:Name="MaxStoredBox" Padding="4" />
+
+                <Separator Margin="0,10" />
+                <CheckBox x:Name="RestoreMinimizedBox" Content="還原時保留最小化狀態" Margin="0,2" />
+                <CheckBox x:Name="RunAtLoginBox" Content="開機時自動啟動本程式" Margin="0,2" />
+
+                <Separator Margin="0,10" />
+                <TextBlock Text="排除的執行檔（每行一個，子字串比對）" FontWeight="Bold" Margin="0,0,0,6" />
+                <TextBox x:Name="ExcludedExeBox" Height="60" AcceptsReturn="True"
+                         TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Padding="4" />
+
+                <TextBlock Text="排除的視窗類別名（每行一個）" FontWeight="Bold" Margin="0,10,0,6" />
+                <TextBox x:Name="ExcludedClassBox" Height="60" AcceptsReturn="True"
+                         TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Padding="4" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="儲存" Width="90" Height="30" Click="Save_Click" IsDefault="True" />
+            <Button Content="取消" Width="90" Height="30" Margin="8,0,0,0" Click="Cancel_Click" IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</Window>

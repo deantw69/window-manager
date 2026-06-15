@@ -1,0 +1,23 @@
+# .NET build 產物
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.suo
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.userprefs
+
+# 測試結果
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# 其他
+*.log
