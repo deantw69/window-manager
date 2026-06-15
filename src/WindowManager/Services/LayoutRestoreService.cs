@@ -37,7 +37,7 @@ public sealed class LayoutRestoreService
             }
 
             usedHandles.Add(match.Handle);
-            results.Add(ApplyTo(match.Handle, layout, settings));
+            results.Add(ApplyTo(match.Handle, layout));
         }
 
         return new RestoreSummary(results);
@@ -67,10 +67,10 @@ public sealed class LayoutRestoreService
         if (bestLayout is null)
             return null;
 
-        return ApplyTo(hWnd, bestLayout, settings);
+        return ApplyTo(hWnd, bestLayout);
     }
 
-    private RestoreItemResult ApplyTo(IntPtr hWnd, WindowLayout layout, AppSettings settings)
+    private RestoreItemResult ApplyTo(IntPtr hWnd, WindowLayout layout)
     {
         if (!NativeMethods.IsWindow(hWnd))
             return new RestoreItemResult(layout, RestoreOutcome.Skipped, "視窗已關閉");
@@ -81,6 +81,9 @@ public sealed class LayoutRestoreService
         if (!NativeMethods.GetWindowPlacement(hWnd, ref placement))
             return new RestoreItemResult(layout, RestoreOutcome.Failed, "取得 placement 失敗");
 
+        // 只更新「一般位置」矩形；依視窗「現況」維持其最大化/最小化狀態：
+        // 目前最大化的保持最大化、最小化的保持最小化（這些情況下此矩形即還原後的一般位置），
+        // 僅一般視窗會直接套用到此位置。還原不改變視窗的最大化/最小化狀態。
         placement.rcNormalPosition = new RECT
         {
             Left = clamped.X,
@@ -89,12 +92,10 @@ public sealed class LayoutRestoreService
             Bottom = clamped.Y + clamped.Height
         };
 
-        placement.showCmd = layout.State switch
+        placement.showCmd = placement.showCmd switch
         {
-            ShowState.Maximized => NativeMethods.SW_SHOWMAXIMIZED,
-            ShowState.Minimized => settings.RestoreMinimizedState
-                ? NativeMethods.SW_SHOWMINIMIZED
-                : NativeMethods.SW_SHOWNOACTIVATE,
+            NativeMethods.SW_SHOWMAXIMIZED => NativeMethods.SW_SHOWMAXIMIZED,
+            NativeMethods.SW_SHOWMINIMIZED => NativeMethods.SW_SHOWMINIMIZED,
             _ => NativeMethods.SW_SHOWNOACTIVATE
         };
 

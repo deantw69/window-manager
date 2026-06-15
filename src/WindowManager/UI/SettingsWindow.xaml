@@ -60,7 +60,6 @@
                 <TextBox x:Name="MaxStoredBox" Padding="4" />
 
                 <Separator Margin="0,10" />
-                <CheckBox x:Name="RestoreMinimizedBox" Content="還原時保留最小化狀態" Margin="0,2" />
                 <CheckBox x:Name="RunAtLoginBox" Content="開機時自動啟動本程式" Margin="0,2" />
 
                 <Separator Margin="0,10" />

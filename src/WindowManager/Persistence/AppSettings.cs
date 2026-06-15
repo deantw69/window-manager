@@ -27,9 +27,6 @@ public sealed class AppSettings
     /// <summary>自動定時儲存間隔（秒）。</summary>
     public int AutoSaveIntervalSeconds { get; set; } = 300;
 
-    /// <summary>還原最小化視窗時是否保留最小化狀態（否則還原為一般可見）。</summary>
-    public bool RestoreMinimizedState { get; set; } = true;
-
     /// <summary>視窗比對門檻（0~1），達到才視為匹配。</summary>
     public double MatchThreshold { get; set; } = 0.6;
 

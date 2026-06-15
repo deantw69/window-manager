@@ -32,7 +32,6 @@ public partial class SettingsWindow : Window
         AutoRestoreNewBox.IsChecked = s.AutoRestoreNewWindowsEnabled;
         RestoreOnStartupBox.IsChecked = s.RestoreOnStartupEnabled;
         DisplayChangeRestoreBox.IsChecked = s.DisplayChangeRestoreEnabled;
-        RestoreMinimizedBox.IsChecked = s.RestoreMinimizedState;
         RunAtLoginBox.IsChecked = s.RunAtLogin;
 
         IntervalBox.Text = s.AutoSaveIntervalSeconds.ToString(CultureInfo.InvariantCulture);
@@ -124,7 +123,6 @@ public partial class SettingsWindow : Window
             AutoRestoreNewWindowsEnabled = AutoRestoreNewBox.IsChecked == true,
             RestoreOnStartupEnabled = RestoreOnStartupBox.IsChecked == true,
             DisplayChangeRestoreEnabled = DisplayChangeRestoreBox.IsChecked == true,
-            RestoreMinimizedState = RestoreMinimizedBox.IsChecked == true,
             RunAtLogin = RunAtLoginBox.IsChecked == true,
             AutoSaveIntervalSeconds = interval,
             MatchThreshold = threshold,
