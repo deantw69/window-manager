@@ -116,7 +116,10 @@ if (-not $hasTag) {
     git tag -a $tag -m "視窗管理員 $tag"
     Write-Host "    已建立 tag $tag"
 }
-git push origin $tag 2>&1 | Out-Null
+# 注意：勿用 2>&1，否則 PowerShell 5.1 會把 git 的 stderr 進度訊息包成
+# NativeCommandError，在 ErrorActionPreference=Stop 下誤判為失敗而中止。
+git push origin $tag
+if ($LASTEXITCODE -ne 0) { throw "推送 tag $tag 失敗。" }
 Write-Host "    已推送 tag $tag"
 
 # --- 建立 Release ---
@@ -133,16 +136,18 @@ $rel = Invoke-RestMethod -Method Post -Headers $headers -ContentType "applicatio
 Write-Host "    $($rel.html_url)" -ForegroundColor Green
 
 # --- 上傳資產 ---
+# 注意：upload_url 與 headers 以參數明確傳入函式，不要依賴函式自動讀取 script-scope 變數。
 $uploadBase = $rel.upload_url -replace '\{.*\}', ''
-function Send-Asset($path, $contentType) {
+if (-not $uploadBase) { throw "無法從 Release 回應取得 upload_url。" }
+
+function Send-Asset($base, $hdr, $path, $contentType) {
     $name = Split-Path $path -Leaf
     Write-Host "==> 上傳 $name" -ForegroundColor Cyan
-    $h = $headers.Clone()
-    Invoke-RestMethod -Method Post -Headers $h -ContentType $contentType `
-        -Uri "$uploadBase?name=$name" -InFile $path | Out-Null
+    Invoke-RestMethod -Method Post -Headers $hdr -ContentType $contentType `
+        -Uri ("{0}?name={1}" -f $base, $name) -InFile $path | Out-Null
     Write-Host "    OK"
 }
-Send-Asset $zip "application/zip"
-Send-Asset $exe "application/octet-stream"
+Send-Asset $uploadBase $headers $zip "application/zip"
+Send-Asset $uploadBase $headers $exe "application/octet-stream"
 
 Write-Host "`n==> 完成：$($rel.html_url)" -ForegroundColor Green
