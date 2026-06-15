@@ -9,7 +9,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>WindowManager</RootNamespace>
     <AssemblyName>WindowManager</AssemblyName>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
     <Product>視窗管理員</Product>
     <Description>Windows 視窗位置記憶與還原工具</Description>
     <ApplicationManifest>app.manifest</ApplicationManifest>
