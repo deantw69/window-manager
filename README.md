@@ -37,6 +37,44 @@ WindowManager.exe --restore   # 依已存佈局還原匹配視窗後結束
 WindowManager.exe --clear     # 清除所有已記憶的佈局
 ```
 
+## 測試
+
+```powershell
+dotnet test
+```
+
+## 打包發佈
+
+用打包腳本一次產出兩種 self-contained 版本（皆免安裝 .NET），輸出至 `publish\`：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\package.ps1
+# 跳過測試： -SkipTests ；指定版本／環境： -Version 1.2.0 -Runtime win-x64
+```
+
+產出：
+- `WindowManager-v<版本>-win-x64.zip`（**建議分享給他人**）：一般資料夾形式，防毒較不易誤判。
+- `WindowManager.exe`（單檔）：方便，但自解壓型態部分防毒較敏感。
+
+版本號取自 `src\WindowManager\WindowManager.csproj` 的 `<Version>`。
+
+> 若需手動執行，等同於：
+> ```powershell
+> # 資料夾版
+> dotnet publish src\WindowManager\WindowManager.csproj -c Release -r win-x64 --self-contained true `
+>   -p:PublishSingleFile=false -p:DebugType=none -o publish\win-x64
+> # 單檔版
+> dotnet publish src\WindowManager\WindowManager.csproj -c Release -r win-x64 --self-contained true `
+>   -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish\single
+> ```
+
+### 分享與防毒注意
+
+未做數位簽章的 exe 可能被 SmartScreen 或防毒擋下：
+- SmartScreen：「其他資訊」→「仍要執行」。
+- 右鍵檔案 → 內容 → 勾「解除封鎖」→ 確定（對 ZIP 解封鎖再解壓，可一次解掉整包標記）。
+- 優先分享上述 **ZIP 版**並透過可信來源（GitHub Release / 雲端硬碟）連結下載，避免直接傳 `.exe`。
+
 ## 預設行為
 
 - 預設管理所有一般視窗，可在設定的「排除清單」排除特定執行檔或視窗類別名。
