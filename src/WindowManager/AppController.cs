@@ -20,6 +20,7 @@ public sealed class AppController : IDisposable
     private HotkeyManager _hotkeys = null!;
     private AutoSaveScheduler _autoSave = null!;
     private WindowEventWatcher _watcher = null!;
+    private DisplayChangeWatcher _displayWatcher = null!;
     private TrayIcon _tray = null!;
     private LayoutCaptureService _capture = null!;
     private readonly LayoutRestoreService _restore = new();
@@ -49,6 +50,9 @@ public sealed class AppController : IDisposable
         _watcher = new WindowEventWatcher(Dispatcher.CurrentDispatcher);
         _watcher.WindowShown += OnNewWindowShown;
 
+        _displayWatcher = new DisplayChangeWatcher(Dispatcher.CurrentDispatcher);
+        _displayWatcher.DisplayChanged += () => RestoreNow(silent: true);
+
         _tray = new TrayIcon();
         _tray.SaveClicked += SaveNow;
         _tray.RestoreClicked += RestoreNow;
@@ -75,6 +79,7 @@ public sealed class AppController : IDisposable
         var errors = _hotkeys.Apply(settings);
         _autoSave.Apply(settings);
         _watcher.SetEnabled(settings.AutoRestoreNewWindowsEnabled);
+        _displayWatcher.SetEnabled(settings.DisplayChangeRestoreEnabled);
 
         SyncStartup(settings);
 
@@ -198,6 +203,7 @@ public sealed class AppController : IDisposable
         _hotkeys?.Dispose();
         _autoSave?.Dispose();
         _watcher?.Dispose();
+        _displayWatcher?.Dispose();
         _tray?.Dispose();
         _messageWindow?.Dispose();
     }

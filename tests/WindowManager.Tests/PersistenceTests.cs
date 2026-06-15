@@ -108,6 +108,26 @@ public class PersistenceTests : IDisposable
     }
 
     [Fact]
+    public void SettingsStore_DisplayChangeRestore_RoundTrips()
+    {
+        var store = new SettingsStore(P("settings.json"));
+        store.Save(new AppSettings { DisplayChangeRestoreEnabled = true });
+        Assert.True(store.Load().DisplayChangeRestoreEnabled);
+    }
+
+    [Fact]
+    public void SettingsStore_OldFileMissingNewField_DefaultsToFalse()
+    {
+        // 舊版設定檔（schema 相同但無 DisplayChangeRestoreEnabled 欄位）應正常讀取，新欄位取預設值
+        var path = P("settings.json");
+        File.WriteAllText(path, "{\"SchemaVersion\":1,\"AutoSaveEnabled\":true}");
+
+        var loaded = new SettingsStore(path).Load();
+        Assert.True(loaded.AutoSaveEnabled);                  // 舊欄位仍讀得到
+        Assert.False(loaded.DisplayChangeRestoreEnabled);     // 新欄位取預設（關閉）
+    }
+
+    [Fact]
     public void SettingsStore_WrongVersion_ReturnsDefaults()
     {
         var path = P("settings.json");

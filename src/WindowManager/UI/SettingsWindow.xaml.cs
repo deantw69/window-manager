@@ -31,6 +31,7 @@ public partial class SettingsWindow : Window
         AutoSaveEnabledBox.IsChecked = s.AutoSaveEnabled;
         AutoRestoreNewBox.IsChecked = s.AutoRestoreNewWindowsEnabled;
         RestoreOnStartupBox.IsChecked = s.RestoreOnStartupEnabled;
+        DisplayChangeRestoreBox.IsChecked = s.DisplayChangeRestoreEnabled;
         RestoreMinimizedBox.IsChecked = s.RestoreMinimizedState;
         RunAtLoginBox.IsChecked = s.RunAtLogin;
 
@@ -122,6 +123,7 @@ public partial class SettingsWindow : Window
             AutoSaveEnabled = AutoSaveEnabledBox.IsChecked == true,
             AutoRestoreNewWindowsEnabled = AutoRestoreNewBox.IsChecked == true,
             RestoreOnStartupEnabled = RestoreOnStartupBox.IsChecked == true,
+            DisplayChangeRestoreEnabled = DisplayChangeRestoreBox.IsChecked == true,
             RestoreMinimizedState = RestoreMinimizedBox.IsChecked == true,
             RunAtLogin = RunAtLoginBox.IsChecked == true,
             AutoSaveIntervalSeconds = interval,

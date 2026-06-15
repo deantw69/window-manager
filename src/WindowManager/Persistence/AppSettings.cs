@@ -13,6 +13,9 @@ public sealed class AppSettings
     public bool AutoRestoreNewWindowsEnabled { get; set; } = false;
     public bool RestoreOnStartupEnabled { get; set; } = false;
 
+    /// <summary>螢幕配置（數量/解析度/排列）變更時自動還原佈局。</summary>
+    public bool DisplayChangeRestoreEnabled { get; set; } = false;
+
     /// <summary>開機自動啟動本程式。</summary>
     public bool RunAtLogin { get; set; } = false;
 
