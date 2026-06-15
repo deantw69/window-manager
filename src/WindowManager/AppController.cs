@@ -26,6 +26,9 @@ public sealed class AppController : IDisposable
 
     private AppSettings _settings = new();
 
+    // 打斷「還原 → 觸發 SHOW 事件 → 再還原」的自我回授迴圈（Win11 尤其明顯）。
+    private readonly RestoreCooldownTracker _restoreCooldown = new(TimeSpan.FromSeconds(3));
+
     public AppSettings Settings => _settings;
 
     public void Start()
@@ -140,6 +143,9 @@ public sealed class AppController : IDisposable
         {
             var set = _layoutStore.Load();
             var summary = _restore.RestoreAll(set, _settings);
+            foreach (var item in summary.Items)
+                if (item.Outcome == RestoreOutcome.Restored)
+                    _restoreCooldown.Mark(item.Handle);
             if (!silent)
                 _tray.ShowInfo("已還原",
                     $"還原 {summary.Restored} 個，未匹配 {summary.NoMatch} 個，失敗 {summary.Failed} 個");
@@ -152,10 +158,17 @@ public sealed class AppController : IDisposable
 
     private void OnNewWindowShown(IntPtr hWnd)
     {
+        // 若這個視窗是本程式剛還原過的，跳過：避免我們自己的 SetWindowPlacement
+        // 觸發的 SHOW 事件再次回來要求還原，形成無限迴圈。
+        if (_restoreCooldown.IsCoolingDown(hWnd))
+            return;
+
         try
         {
             var set = _layoutStore.Load();
-            _restore.RestoreSingleWindow(hWnd, set, _settings);
+            var result = _restore.RestoreSingleWindow(hWnd, set, _settings);
+            if (result?.Outcome == RestoreOutcome.Restored)
+                _restoreCooldown.Mark(hWnd);
         }
         catch
         {

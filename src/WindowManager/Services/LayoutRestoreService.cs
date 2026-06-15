@@ -6,7 +6,7 @@ namespace WindowManager.Services;
 
 public enum RestoreOutcome { Restored, NoMatch, Failed, Skipped }
 
-public sealed record RestoreItemResult(WindowLayout Layout, RestoreOutcome Outcome, string? Note = null);
+public sealed record RestoreItemResult(WindowLayout Layout, RestoreOutcome Outcome, string? Note = null, IntPtr Handle = default);
 
 public sealed record RestoreSummary(IReadOnlyList<RestoreItemResult> Items)
 {
@@ -101,6 +101,6 @@ public sealed class LayoutRestoreService
         if (!NativeMethods.SetWindowPlacement(hWnd, ref placement))
             return new RestoreItemResult(layout, RestoreOutcome.Failed, "SetWindowPlacement 失敗");
 
-        return new RestoreItemResult(layout, RestoreOutcome.Restored);
+        return new RestoreItemResult(layout, RestoreOutcome.Restored, Handle: hWnd);
     }
 }
