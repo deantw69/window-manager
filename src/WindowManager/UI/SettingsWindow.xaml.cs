@@ -1,7 +1,9 @@
 using System.Globalization;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using WindowManager.Persistence;
 
 namespace WindowManager;
@@ -18,11 +20,21 @@ public partial class SettingsWindow : Window
     {
         InitializeComponent();
 
+        Icon = LoadWindowIcon();
         _original = settings;
         _saveHotkey = Clone(settings.SaveHotkey);
         _restoreHotkey = Clone(settings.RestoreHotkey);
 
         LoadFrom(settings);
+    }
+
+    /// <summary>載入內嵌應用程式圖示作為視窗圖示，失敗回傳 null。</summary>
+    private static BitmapFrame? LoadWindowIcon()
+    {
+        using var stream = Assembly.GetExecutingAssembly()
+            .GetManifestResourceStream("WindowManager.Resources.app.ico");
+        return stream is null ? null : BitmapFrame.Create(stream,
+            BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
     }
 
     private void LoadFrom(AppSettings s)

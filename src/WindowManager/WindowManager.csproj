@@ -13,8 +13,14 @@
     <Product>視窗管理員</Product>
     <Description>Windows 視窗位置記憶與還原工具</Description>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Resources\app.ico</ApplicationIcon>
     <!-- WPF 透過 manifest 設定 Per-Monitor v2 DPI；抑制 WinForms 工具鏈的 WFAC010 提示 -->
     <NoWarn>$(NoWarn);WFAC010</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 內嵌圖示供系統列與視窗載入 -->
+    <EmbeddedResource Include="Resources\app.ico" />
+  </ItemGroup>
 
 </Project>

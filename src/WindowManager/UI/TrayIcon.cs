@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace WindowManager.UI;
@@ -7,6 +8,7 @@ namespace WindowManager.UI;
 public sealed class TrayIcon : IDisposable
 {
     private readonly NotifyIcon _icon;
+    private readonly Icon? _appIcon;
 
     public event Action? SaveClicked;
     public event Action? RestoreClicked;
@@ -25,15 +27,24 @@ public sealed class TrayIcon : IDisposable
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("結束", null, (_, _) => ExitClicked?.Invoke());
 
+        _appIcon = LoadAppIcon();
         _icon = new NotifyIcon
         {
-            Icon = SystemIcons.Application,
+            Icon = _appIcon ?? SystemIcons.Application,
             Text = "視窗管理員",
             Visible = true,
             ContextMenuStrip = menu
         };
 
         _icon.DoubleClick += (_, _) => SettingsClicked?.Invoke();
+    }
+
+    /// <summary>載入內嵌的應用程式圖示，失敗則回傳 null 改用系統預設。</summary>
+    private static Icon? LoadAppIcon()
+    {
+        var asm = Assembly.GetExecutingAssembly();
+        using var stream = asm.GetManifestResourceStream("WindowManager.Resources.app.ico");
+        return stream is null ? null : new Icon(stream);
     }
 
     public void ShowInfo(string title, string message)
@@ -47,5 +58,6 @@ public sealed class TrayIcon : IDisposable
     {
         _icon.Visible = false;
         _icon.Dispose();
+        _appIcon?.Dispose();
     }
 }
