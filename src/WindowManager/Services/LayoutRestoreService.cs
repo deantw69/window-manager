@@ -27,6 +27,13 @@ public sealed class LayoutRestoreService
 
         foreach (var layout in set.Windows)
         {
+            // 即使佈局是在加入排除規則之前儲存的，還原時仍需依目前排除清單略過
+            if (WindowMatcher.IsExcluded(layout.ExecutablePath, layout.ClassName, settings))
+            {
+                results.Add(new RestoreItemResult(layout, RestoreOutcome.Skipped, "已排除"));
+                continue;
+            }
+
             var pool = candidates.Where(c => !usedHandles.Contains(c.Handle));
             var match = WindowMatcher.FindBestMatch(layout, pool, signature, settings.MatchThreshold);
 
