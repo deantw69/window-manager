@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using WindowManager.Interop;
 using WindowManager.Persistence;
 
 namespace WindowManager;
@@ -26,6 +27,40 @@ public partial class SettingsWindow : Window
         _restoreHotkey = Clone(settings.RestoreHotkey);
 
         LoadFrom(settings);
+        LoadRunningApps();
+    }
+
+    /// <summary>列出目前開啟中視窗的執行檔名（去重、排序），供下拉選單選擇後加入排除清單。</summary>
+    private void LoadRunningApps()
+    {
+        var items = WindowEnumerator.Enumerate(new System.Windows.Interop.WindowInteropHelper(this).Handle)
+            .Select(w => w.ExecutablePath)
+            .Where(p => !string.IsNullOrEmpty(p))
+            .Select(System.IO.Path.GetFileName)
+            .Where(n => !string.IsNullOrEmpty(n))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        RunningAppBox.ItemsSource = items;
+        if (items.Count > 0)
+            RunningAppBox.SelectedIndex = 0;
+    }
+
+    private void RefreshRunningApps_Click(object sender, RoutedEventArgs e) => LoadRunningApps();
+
+    private void AddRunningApp_Click(object sender, RoutedEventArgs e)
+    {
+        if (RunningAppBox.SelectedItem is not string name || string.IsNullOrWhiteSpace(name))
+            return;
+
+        var existing = SplitLines(ExcludedExeBox.Text);
+        if (existing.Any(l => string.Equals(l, name, StringComparison.OrdinalIgnoreCase)))
+            return;
+
+        ExcludedExeBox.Text = ExcludedExeBox.Text.Length == 0
+            ? name
+            : ExcludedExeBox.Text.TrimEnd('\r', '\n') + Environment.NewLine + name;
     }
 
     /// <summary>載入內嵌應用程式圖示作為視窗圖示，失敗回傳 null。</summary>

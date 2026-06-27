@@ -64,6 +64,19 @@
 
                 <Separator Margin="0,10" />
                 <TextBlock Text="排除的執行檔（每行一個，子字串比對）" FontWeight="Bold" Margin="0,0,0,6" />
+                <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Grid.Column="0" x:Name="RunningAppBox" Padding="4"
+                              ToolTip="目前開啟中的程式，選擇後按「加入」" />
+                    <Button Grid.Column="1" Content="重新整理" Margin="6,0,0,0" Padding="8,2"
+                            Click="RefreshRunningApps_Click" />
+                    <Button Grid.Column="2" Content="加入" Margin="6,0,0,0" Padding="8,2"
+                            Click="AddRunningApp_Click" />
+                </Grid>
                 <TextBox x:Name="ExcludedExeBox" Height="60" AcceptsReturn="True"
                          TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Padding="4" />
 
